@@ -4,23 +4,36 @@
 #include <stdbool.h>
 
 struct parsedInfo {
-    bool badRequest;
-    int startOfContent;
-
     char Method[16];
     char Version[16];
-    char Uri[8192];
-    //* add hashtable to hold header fields */
+    char Uri[4192];
+    //* add DA to hold header fields */
 };
 typedef struct parsedInfo parsedInfo;
 
-/** 
- * Given a buffer it returns a struct with all the request info or NULL for error.
-**/
-parsedInfo* parseRequest(char* buffer);
+/*
+* Parses a HTTP request into its individual parts given the buffer containing the entire request
+* and the index at which the content part starts. Returns -1 if request is ill formed. -2 if URI is too long. -3 for error.
+* 0 for normal function.
+*/
+int parseRequest(parsedInfo* info, char* buffer, int contentStart);
 
-int parseRequestLine(parsedInfo* info, char* buffer);
+/*
+* Helper function to parse request line. Returns -1 if request is ill formed. -2 if URI is too long. -3 for error.
+* Otherwise returns the start index of Header fields.
+*/
+int parseRequestLine(parsedInfo* info, char* buffer, int startIndex, int contentStart);
 
-int parseHeaderFields(parsedInfo* info, char* buffer);
+/*
+* Helper function to parse header fields. Returns -1 if request is ill formed. -3 for error. 0 for normal function.
+*/
+int parseHeaderFields(parsedInfo* info, char* buffer, int startIndex, int contentStart);
 
-void deleteParseRequest(parsedInfo**);
+void deleteParseRequest(parsedInfo** info);
+
+/*
+* Find the last index of the response section contained inside the buffer. -1 if it doesn't exist. -2 for error.
+* Works without null termination
+*/
+int findContentStartIndex(char* buffer, int bufferSize);
+

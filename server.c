@@ -11,7 +11,22 @@
 
 int main(void){
 
-    parsedInfo* info = parseRequest("GET uri HTTP/1.1");
+    /*
+    parsedInfo* info = parseRequest("GET uristuff HTTP/1.1\r\nkey1:val1\r\nkey2: val2 \r\n key3: val4\r\n\r\nthisiscontent", 63);
+    printf("%s\n", info->Method);
+    printf("%s\n", info->Uri);
+    printf("%s\n", info->Version);
+    */
+
+    char str[75] = "GET uristuff HTTP/1.1\r\nkey1:val1\r\nkey2: val2 \r\n key3: val4\r\n\r\nthisiscontent";
+    int x = findContentStartIndex(str, 75);
+    parsedInfo info;
+    parseRequest(&info, str, x);
+
+    printf("%s\n", info.Method);
+    printf("%s\n", info.Uri);
+    printf("%s\n", info.Version);
+    
     return 0;
 }
 
